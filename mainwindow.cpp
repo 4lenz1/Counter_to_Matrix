@@ -11,6 +11,7 @@
 #include <fstream>
 #include <iterator>
 #include <sstream>
+#include <vector>
 using namespace std;
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -71,17 +72,18 @@ void MainWindow::on_btnClick_clicked()
 
     // the stupidest way to initial vector with 0
     for (int i = 0 ; i < border ; i++)
-            for (int j = 0 ; j < border ; j++)
-                vec[i][j] = zero;
+        for (int j = 0 ; j < border ; j++)
+            vec[i][j] = zero;
+
 
     // testing vector output
 
-//    for (int i = 0 ; i < border ; i++)
-//        {
-//            for (int j = 0 ; j < border ; j++)
-//                cout << setw(3) << vec[i][j];
-//            cout << endl;
-//        }
+    //    for (int i = 0 ; i < border ; i++)
+    //        {
+    //            for (int j = 0 ; j < border ; j++)
+    //                cout << setw(3) << vec[i][j];
+    //            cout << endl;
+    //        }
 
 
 
@@ -95,12 +97,58 @@ void MainWindow::on_btnClick_clicked()
         vec[row][col] = val;
     }
 
-    QString filePath = QFileDialog::getSaveFileName(this, tr("Save File to"),
+    string filePath = QFileDialog::getSaveFileName(this, tr("Save File to"),
                                                    "",
-                                                   tr("csv (*csv*)"));
+                                                   tr("csv (*csv*)")).toStdString();
 
-    //ofstream outputFile(filePath.toStdString());
-    ofstream outputFile("text.csv");
-    ostream_iterator<string> output_iterator(outputFile, "\n");
-    copy(  vec.begin() , vec.end(), output_iterator);
+    //    ofstream outputFile(filePath);
+    //    ostream_iterator<string > output_iterator(outputFile, "\n");
+    //    copy(  vec.begin() , vec.end(), output_iterator);
+
+
+//    QFile saveFile(QString::fromStdString(filePath));
+//    saveFile.open(QIODevice::WriteOnly);
+//    QDataStream out(&saveFile);
+
+    fstream fp;
+
+    fp.open(filePath , ios::out);
+    if( !fp){
+        qDebug () << "fail to open file"   ;
+    }
+    for (int i = 0 ; i < border ; i++)
+    {
+        for (int j = 0 ; j < border ; j++){
+
+//            fp << (vec[i][j] == 0) ? "0"  : vec[i][j]  ;
+//            fp  << " ";
+
+
+
+//            if (vec[i][j] =="")
+//               fp<< vec[i][j] = "0";
+//            else
+//                fp << vec[i][j] + " " ;
+
+
+
+            string out = vec[i][j] + " " ;
+            fp << out;
+        }
+        fp << endl;
+    }
+
+
+    fp.close();
+
+    //    ofstream output_file("example.txt");
+    //    ostream_iterator<string > output_iterator(output_file, "\n");
+    //    for(const auto& vt : vec) {
+    //         std::copy(vt.cbegin(), vt.cend(),
+    //               std::ostream_iterator<int>(std::cout, " "));
+    //         std::cout << '\n';
+    //    }
+
+    //ofstream outputFile("text.csv");
+
 }

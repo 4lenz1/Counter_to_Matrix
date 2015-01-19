@@ -13,6 +13,7 @@
 #include <sstream>
 #include <vector>
 #include <algorithm>
+#include <QStringList>
 using namespace std;
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -69,13 +70,31 @@ void MainWindow::on_btnClick_clicked()
     vector<vector<string> > vec( border, vector<string>(border));
 
 
-    while (!in.atEnd()) {
-        //
-        QStringList lineList = in.readLine().split(" ");
-        int row = lineList.at(0).toInt();
-        int col = lineList.at(1).toInt();
-        string val = lineList.at(2).toStdString();
-        vec[row][col] = val;
+    //    while (!in.atEnd()) {
+    //
+    //        QStringList lineList = in.readLine().split(" ");
+    //        int row = lineList.at(0).toInt();
+    //        int col = lineList.at(1).toInt();
+    //        string val = lineList.at(2).toStdString();
+    //        vec[row][col] = val;
+    //    }
+
+    ifstream myfile(ui->lineout->text().toStdString());
+    string str;
+
+
+
+    //    char *chr = "hwllo ";
+    //    qDebug() << chr;
+
+
+
+    while(! in.atEnd()){
+    //    qDebug() << QString::fromStdString(str);
+
+        QStringList lineList = QString::fromStdString(str).split(" ");
+        vec[lineList.at(0).toInt()][lineList.at(1).toInt()] = lineList.at(2).toStdString();
+        lineList.clear();
     }
 
     string filePath = QFileDialog::getSaveFileName(this, tr("Save File to"),

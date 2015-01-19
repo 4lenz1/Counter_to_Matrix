@@ -81,7 +81,7 @@ $(DESTDIR_TARGET): ui_mainwindow.h $(OBJECTS)
 	$(LINKER) $(LFLAGS) -o $(DESTDIR_TARGET) $(OBJECTS)  $(LIBS)
 
 qmake: FORCE
-	@$(QMAKE) -spec win32-g++ -o Makefile.Release Counter_to_Matrix.pro
+	@$(QMAKE) -spec win32-g++ CONFIG+=debug -o Makefile.Release Counter_to_Matrix.pro
 
 qmake_all: FORCE
 

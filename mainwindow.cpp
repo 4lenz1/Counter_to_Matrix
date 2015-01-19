@@ -69,25 +69,6 @@ void MainWindow::on_btnClick_clicked()
     vector<vector<string> > vec( border, vector<string>(border));
 
 
-
-    // the stupidest way to initial vector with 0
-    for (int i = 0 ; i < border ; i++)
-        for (int j = 0 ; j < border ; j++)
-            vec[i][j] = "0";
-
-
-    // testing vector output
-
-    //    for (int i = 0 ; i < border ; i++)
-    //        {
-    //            for (int j = 0 ; j < border ; j++)
-    //                cout << setw(3) << vec[i][j];
-    //            cout << endl;
-    //        }
-
-
-
-
     while (!in.atEnd()) {
         //
         QStringList lineList = in.readLine().split(" ");
@@ -100,66 +81,19 @@ void MainWindow::on_btnClick_clicked()
     string filePath = QFileDialog::getSaveFileName(this, tr("Save File to"),
                                                    "",
                                                    tr("csv (*csv*)")).toStdString();
-
-//    std::ofstream outputFile(filePath);
-//    std::ostream_iterator<string > output_iterator(outputFile, "\n");
-//    std::copy(vec.begin() , vec.end(), output_iterator);
-
-
-//    QFile saveFile(QString::fromStdString(filePath));
-//    saveFile.open(QIODevice::WriteOnly);
-//    QDataStream out(&saveFile);
-
     fstream fp;
-      string bufferLine[border];
-     string buffer ;
+    string buffer;
     fp.open(filePath , ios::out | ios::app);
     if( !fp){
         qDebug () << "fail to open file"   ;
+        exit(1);
     }
-    for (int i = 0 ; i < border ; i++)
-    {
+    for (int i = 0 ; i < border ; i++){
         for (int j = 0 ; j < border ; j++){
-
-//            fp << (vec[i][j] == 0) ? "0"  : vec[i][j]  ;
-//            fp  << " ";
-
-
-
-//            if (vec[i][j] =="")
-//               fp<< vec[i][j] = "0";
-//            else
-//                fp << vec[i][j] + " ";
-           buffer += vec[i][j] + ",";
-
-
-
-            //string out = vec[i][j] + ",";
-            //fp << out;
+            buffer += (vec[i][j]=="") ? "0," : vec[i][j] + ",";
         }
-
-        buffer.resize(buffer.size() - 1 );
-        //bufferLine[i] = buffer ;
-        fp <<buffer;
-        fp << endl;
-      //  qDebug()  << QString::fromStdString( bufferLine[i]) << "\n" ;
+        fp <<buffer << endl;
         buffer.erase(buffer.begin() , buffer.end());
     }
-
-
     fp.close();
-
-//        ofstream output_file("example.txt");
-//        ostream_iterator<string > output_iterator(output_file, "\n");
-//    for(int i = 0 ; i < border ; i++)
-//         copy(  vec.begin() , vec.end(), output_iterator);
-
-        //    for(const auto& vt : vec) {
-    //         std::copy(vt.cbegin(), vt.cend(),
-    //               std::ostream_iterator<int>(std::cout, " "));
-    //         std::cout << '\n';
-    //    }
-
-    //ofstream outputFile("text.csv");
-
 }

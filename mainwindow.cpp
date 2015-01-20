@@ -14,7 +14,10 @@
 #include <vector>
 #include <algorithm>
 #include <QStringList>
+
 using namespace std;
+string arr[81306][81306] ;
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -51,7 +54,7 @@ void MainWindow::on_btnClick_clicked()
     if(ui->lineout->text() == ""){
         on_btnOpen_clicked();
     }
-
+    qDebug() << "opening file" ;
     QFile file(ui->lineout->text());
     QTextStream in(&file);
 
@@ -70,38 +73,43 @@ void MainWindow::on_btnClick_clicked()
     vector<vector<string> > vec( border, vector<string>(border));
 
 
-    //    while (!in.atEnd()) {
-    //
-    //        QStringList lineList = in.readLine().split(" ");
-    //        int row = lineList.at(0).toInt();
-    //        int col = lineList.at(1).toInt();
-    //        string val = lineList.at(2).toStdString();
-    //        vec[row][col] = val;
-    //    }
+    //    //    while (!in.atEnd()) {
+    //    //
+    //    //        QStringList lineList = in.readLine().split(" ");
+    //    //        int row = lineList.at(0).toInt();
+    //    //        int col = lineList.at(1).toInt();
+    //    //        string val = lineList.at(2).toStdString();
+    //    //        vec[row][col] = val;
+    //    //    }
 
-    ifstream myfile(ui->lineout->text().toStdString());
+    //   // ifstream myfile(ui->lineout->text().toStdString());
     string str;
 
 
 
-    //    char *chr = "hwllo ";
-    //    qDebug() << chr;
+    //    //    char *chr = "hwllo ";
+    //    //    qDebug() << chr;
 
-
-
+    qDebug() << "make a array" ;
+    int index=  0 ;
+    QStringList lineList;
     while(! in.atEnd()){
-    //    qDebug() << QString::fromStdString(str);
-
-        QStringList lineList = QString::fromStdString(str).split(" ");
-        vec[lineList.at(0).toInt()][lineList.at(1).toInt()] = lineList.at(2).toStdString();
+        //qDebug() << QString::fromStdString(str);
+        lineList = QString::fromStdString(in.readLine().toStdString()).split(" ");
+        arr[lineList.at(0).toInt()][lineList.at(1).toInt()] = lineList.at(2).toStdString();
+        qDebug() << "index : " << index++ ;
+        //vec[lineList.at(0).toInt()][lineList.at(1).toInt()] = lineList.at(2).toStdString();
         lineList.clear();
     }
+    qDebug() << "read completed" ;
 
     string filePath = QFileDialog::getSaveFileName(this, tr("Save File to"),
                                                    "",
                                                    tr("csv (*csv*)")).toStdString();
     fstream fp;
     string buffer;
+
+
     fp.open(filePath , ios::out | ios::app);
     if( !fp){
         qDebug () << "fail to open file"   ;
@@ -109,10 +117,13 @@ void MainWindow::on_btnClick_clicked()
     }
     for (int i = 0 ; i < border ; i++){
         for (int j = 0 ; j < border ; j++){
-            buffer += (vec[i][j]=="") ? "0," : vec[i][j] + ",";
+            buffer += (arr[i][j]=="") ? "0," : arr[i][j] + ",";
         }
+        buffer.pop_back();
         fp <<buffer << endl;
         buffer.erase(buffer.begin() , buffer.end());
     }
     fp.close();
+
+    qDebug() << "Done !!" ;
 }

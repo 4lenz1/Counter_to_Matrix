@@ -16,8 +16,11 @@
 #include <QStringList>
 
 using namespace std;
-string arr[81306][81306] ;
-
+int border ;
+string arr[81306] ;
+string buffer;
+fstream fp;
+int row = 0 ;
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -49,6 +52,19 @@ void MainWindow::on_btnOpen_clicked()
 
 }
 
+
+void load(){
+    qDebug() << " Load :: Row : " << row ;
+    buffer.pop_back();
+    fp <<buffer << endl;
+    qDebug() << "write line  :" << QString::fromStdString( buffer) ;
+    buffer.erase(buffer.begin() , buffer.end());
+    row ++;
+    for(int index = 0  ; index < border ; index ++)
+        arr[index] = '0';
+    qDebug() <<"Row Clean !" ;
+}
+
 void MainWindow::on_btnClick_clicked()
 {
     if(ui->lineout->text() == ""){
@@ -66,64 +82,66 @@ void MainWindow::on_btnClick_clicked()
     string martixDetail = in.readLine().toStdString();
     QStringList detailList =  QString::fromStdString( martixDetail ).split(" ");
     qDebug() << "row :" << detailList.at(0)
-             << "\ncol :" << detailList.at(1)
-             << "\nquantity :" << detailList.at(2);
+             << "\tcol :" << detailList.at(1)
+             << "\tquantity :" << detailList.at(2);
 
-    int border = detailList.at(0).toInt();
-    vector<vector<string> > vec( border, vector<string>(border));
+    border = detailList.at(0).toInt();
+    qDebug() << "border : " << border ;
 
-
-    //    //    while (!in.atEnd()) {
-    //    //
-    //    //        QStringList lineList = in.readLine().split(" ");
-    //    //        int row = lineList.at(0).toInt();
-    //    //        int col = lineList.at(1).toInt();
-    //    //        string val = lineList.at(2).toStdString();
-    //    //        vec[row][col] = val;
-    //    //    }
-
-    //   // ifstream myfile(ui->lineout->text().toStdString());
-    string str;
-
-
-
-    //    //    char *chr = "hwllo ";
-    //    //    qDebug() << chr;
-
-    qDebug() << "make a array" ;
-    int index=  0 ;
     QStringList lineList;
-    while(! in.atEnd()){
-        //qDebug() << QString::fromStdString(str);
-        lineList = QString::fromStdString(in.readLine().toStdString()).split(" ");
-        arr[lineList.at(0).toInt()][lineList.at(1).toInt()] = lineList.at(2).toStdString();
-        qDebug() << "index : " << index++ ;
-        //vec[lineList.at(0).toInt()][lineList.at(1).toInt()] = lineList.at(2).toStdString();
-        lineList.clear();
-    }
-    qDebug() << "read completed" ;
-
     string filePath = QFileDialog::getSaveFileName(this, tr("Save File to"),
                                                    "",
                                                    tr("csv (*csv*)")).toStdString();
-    fstream fp;
-    string buffer;
-
 
     fp.open(filePath , ios::out | ios::app);
     if( !fp){
         qDebug () << "fail to open file"   ;
         exit(1);
     }
-    for (int i = 0 ; i < border ; i++){
-        for (int j = 0 ; j < border ; j++){
-            buffer += (arr[i][j]=="") ? "0," : arr[i][j] + ",";
-        }
-        buffer.pop_back();
-        fp <<buffer << endl;
-        buffer.erase(buffer.begin() , buffer.end());
-    }
-    fp.close();
 
+    lineList = in.readLine().split(" ");
+    while(! in.atEnd()){
+        while(row == lineList.at(0).toInt() ){
+            qDebug() << "Row : " << lineList.at(0)
+                     <<"\nCol :" << lineList.at(1)
+                    <<"\nVal :" << lineList.at(2);
+            arr[lineList.at(1).toInt()] = lineList.at(2).toStdString();
+            lineList = in.readLine().split(" ");
+        }
+        qDebug() << " row not match : " << row << " " << lineList.at(0);
+
+        for(int i = 0 ; i  < border ; i ++){
+            buffer +=(arr[i]=="") ? "0," : arr[i] + ",";
+            //qDebug() << QString::fromStdString( buffer);
+        }
+        load();
+    }// end while atEnd()
+
+    while(row == lineList.at(0).toInt() ){
+        qDebug() << "Row : " << lineList.at(0)
+                 <<"\nCol :" << lineList.at(1)
+                <<"\nVal :" << lineList.at(2);
+        arr[lineList.at(1).toInt()] = lineList.at(2).toStdString();
+        lineList = in.readLine().split(" ");
+    }
+    qDebug() << " row not match : " << row << " " << lineList.at(0);
+
+    for(int i = 0 ; i  < border ; i ++){
+        buffer +=(arr[i]=="") ? "0," : arr[i] + ",";
+       // qDebug() << QString::fromStdString( buffer);
+    }
+    load();
+
+    if (row <= border){
+        for(int i = 0 ; i  < border ; i ++){
+            buffer +="0,";
+           // qDebug() << QString::fromStdString( buffer);
+        }
+        load();
+    }
+
+
+
+    fp.close();
     qDebug() << "Done !!" ;
 }

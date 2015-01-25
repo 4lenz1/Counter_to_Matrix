@@ -519,7 +519,8 @@ release/mainwindow.o: mainwindow.cpp mainwindow.h \
 		../../Qt/5.4/mingw491_32/include/QtCore/qdir.h \
 		../../Qt/5.4/mingw491_32/include/QtCore/qfileinfo.h \
 		../../Qt/5.4/mingw491_32/include/QtCore/QFile \
-		../../Qt/5.4/mingw491_32/include/QtCore/QDebug
+		../../Qt/5.4/mingw491_32/include/QtCore/QDebug \
+		../../Qt/5.4/mingw491_32/include/QtCore/QStringList
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release\mainwindow.o mainwindow.cpp
 
 release/moc_mainwindow.o: release/moc_mainwindow.cpp 
